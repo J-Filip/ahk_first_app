@@ -1,7 +1,4 @@
- 
- 2021. UPDATE
- učim ponovo, ovaj put preko github desktopa
- 
- 
- ucim git na Thinkfulu i pisem preko CL-a
-novi redak nadam se
+mejlomat.ahk
+
+- GUI application that aims to help helpdesk agents produce quicker and better reponses.  
+- written in AutoHotkey scripting language
