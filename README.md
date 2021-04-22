@@ -1,4 +1,4 @@
-Mejlomat
+<h1>Mejlomat </h1>
 
 WHAT -- mail composer GUI for Helpdesk agents for mail communication <br>
 WHY -- to produce quicker reponses, to avoid having to type the same responses over and over <br>
