@@ -5,7 +5,8 @@ WHY -- to produce quicker reponses, to avoid having to type the same responses o
 HOW -- simple GUI with radio buttons and checkboxes which populate edit box with almost finished responses
 
 
-Check it out
+Pre-release -- NOT for production use
+<br>
 <br>
 ![mejlomat](https://user-images.githubusercontent.com/36717582/115637947-ac92b780-a311-11eb-9fa0-a09452bdd3bb.PNG)
 <br>
