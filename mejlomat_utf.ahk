@@ -10,10 +10,12 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 ;variables
 inputbox, potpis, Ime i prezime agenta za potpis :		; inputbox for var potpis which contains signature
 
+;vars oslovljavanje
 gdine = Poštovani gospodine PREZIME,
 gdjo = Poštovana gospođo PREZIME,
 pozdrav = Pozdrav,
 
+;vars sadržaj
 zahvala = zahvaljujemo na informacijama. Vaš upit je proslijeđen nadležnoj službi.
 sve_ostalo = Za sve ostale upite i dalje Vam stojimo na raspolaganju.
 ust_kor =
@@ -21,6 +23,13 @@ ust_kor =
 Ustanova:
 Korisnik:
 )
+; vars šprance
+nejasni_sadrzaj = (zaprimili smo poruku nejasnog sadržaja. Molimo Vas da provjerite jeste li poruku poslali na ispravnu adresu.
+U slučaju da imate upit za CARNET-ov helpdesk, molimo da nam ga pošaljete u povratnoj poruci kako bismo bili u mogućnosti pružiti odgovarajuću podršku. )
+odgovor_nadlezna = zaprimili smo odgovor nadležne službe.
+nedovoljno_info = zbog nedovoljno informacija nismo Vam u mogućnosti pružiti odgovarajuću podršku. 
+king_popravak : zaprimili smo odgovor nadležne službe kako je poteškoća s opremom serijskog broja _____ otklonjena. U slučaju daljnjih poteškoća, molimo da nas povratno kontaktirate.
+;vars kraj
 lp =
 (
 Lijepi pozdrav,
@@ -40,7 +49,7 @@ GUI Add, Radio, gCBClicked vTiket, Ticket
 Gui, Font, s12 c60021, bold
 Gui, Add, Text, x30 cblack, Sadržaj :
 Gui, Font, s11
-GUI Add, Checkbox,x50 gCBClicked vHvala, Zahvala
+GUI Add, Checkbox,x50 gCBClicked vHvala, Proslijeđeno
 GUI Add, Checkbox, gCBClicked vUstKor, Ustanova i korisnik
 Gui, Font, s12 c60021, bold
 Gui, Add, Text, x30 cblack,  Kraj :
