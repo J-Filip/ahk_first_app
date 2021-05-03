@@ -8,22 +8,31 @@ SetBatchLines, -1
  #Include %A_ScriptDir%\Chrome1.ahk
 crm_running()
 
-PageInst:=Chrome.GetPageByTitle("CARNET CRM") ;uzima otvoreni new tab po imenu
-/*
+PageInst:=Chrome.GetPageByURL("https://suitecrm.carnet.hr/index.php?module=Home&action=index") ;uzima otvoreni new tab po imenu
+
 if !IsObject(PageInst) {
-    msgbox, ovo nije objekt eeeeeeej
+    msgbox, Otovori CRM Home i probaj opet.
     ExitApp
 }
-*/
-;PageInst.Evaluate("alert('hui');")
+
+dashleti_array:= []
+dashleti_txt:=" Dashleti: `n "
+
 PageInst.Evaluate("location.reload()")
 sleep, 4000
-pp_tab = document.querySelector("#tab4").click()
-PageInst.Evaluate(pp_tab)
-sleep, 500
-dashleti_array:= []
-dashleti_txt:=" Moji dashleti `n "
+PageInst:=Chrome.GetPageByURL("https://suitecrm.carnet.hr/index.php?module=Home&action=index")
+dashTab = document.querySelector("#tab0").click()
+PageInst.Evaluate(dashTab)
 
+/*
+js_tabovi =
+(
+  JSON.stringify(
+  [].map.call(document.querySelectorAll(".hidden-xs"), (e) => e.innerText))
+)
+tabovi := chrome.Jxon_Load(PageInst.Evaluate(js_tabovi).value)
+;msgBox, % tabovi[1]
+*/
 js_dashleti =
 (
   JSON.stringify(
@@ -51,7 +60,7 @@ i := 1
 while broj_zahtjeva[i] <> ""{
   ;dashleti_array.Push(dashleti[i])
   ;dashleti_array.Push(broj_zahtjeva[i])
-  dashleti_array.Push((dashleti[i]),("  >  ")(broj_zahtjeva[i]))
+  dashleti_array.Push((dashleti[i]),("  -  ")(broj_zahtjeva[i]))
   i+=1
 }
 
@@ -65,7 +74,6 @@ while broj_zahtjeva[i] <> ""{
     msgBox, % dashleti_txt
 
 
-    */
 ; ____ ovo radi, testiram neš drugo
 while broj_zahtjeva[i] <> ""{
   ;dashleti_array.Push((dashleti[i]))
@@ -73,6 +81,7 @@ while broj_zahtjeva[i] <> ""{
   dashleti_array.Push((dashleti[i]),(broj_zahtjeva[i]))
   i+=1
  }
+ */
 
 
 for each, element in dashleti_array {
@@ -82,5 +91,5 @@ if (dashleti_txt <> "")
 dashleti_txt.=element
   }
   clipboard := dashleti_txt
-  msgBox, % dashleti_txt
+  ;msgBox, % dashleti_txt
 ExitApp

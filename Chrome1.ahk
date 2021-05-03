@@ -2,33 +2,37 @@
 ; Copyright GeekDude 2018
 ; https://github.com/G33kDude/Chrome.ahk
 
-getpozivi(){
-	crm_running()
-	PageInst:=Chrome.GetPageByTitle("CARNET CRM")
-	js_eskole_broj_poziva = document.querySelector("#pbxis_queue_eSkole > span:nth-child(5)").innerText.substr(9)
-	global	eskole_broj_poziva:= PageInst.Evaluate(js_eskole_broj_poziva).value
-	;msgBox,  %eskole_broj_poziva%
+getVrijeme(){
+	InputBox, vrijeme_input, UNESI, Obavijesti me ako poziv traje više od (sekundi):
+	if ErrorLevel
+	  ExitApp
+	if (vrijeme_input = ""){
+	  MsgBox, Ništa nije uneseno. Prati se svaki poziv.
+	  vrijeme_input = 1
+	}
+	global x = vrijeme_input
+	;msgBox, %x%
 }
 
 
+hasekRunning(){
+	try {			 ;  connect to tab with specific url
+		PageInst:= Chrome.GetPageByURL("https://ispravi.me/")
+	}
+	if PageInst {
+		;msgBox, hasek already running.
+		return
+		}else
+		newHasek()
+	}
 newHasek(){
 	url := "https://ispravi.me/"
-	Chrome := new Chrome("C:\Users\juksa\OneDrive\Desktop\ahk_skripte\Chrome.ahk_v1.2\newProfile1", [url] ," --remote-debugging-port=9222" )
+ Chrome := new Chrome("C:\Users\" . A_UserName . "\AppData\Local\Google\Chrome\User Data", [url] ," --remote-debugging-port=9222" )
 	Chrome.WaitForLoad()
 	sleep, 4000
 	PageInst:= Chrome.GetPageByURL("https://ispravi.me/")
 	sleep, 2000
 	hasekRunning()
-}
-hasekRunning(){
-	try {			 ;  connect to tab with specific url
-    PageInst:= Chrome.GetPageByURL("https://ispravi.me/")
-      }
-	if PageInst {
-		 msgBox, hasek already running.
-		 return
- }else
- newHasek()
 }
 
 intapps_running()
@@ -45,7 +49,7 @@ intapps_running()
     PageInst:= Chrome.GetPageByURL("https://intapps.carnet.hr/hdraspored/public/schedule/index")
       }
   if PageInst {
-      msgBox, raspored already running.
+      ;msgBox, raspored already running.
       return
   	}
 	try {				 ;  connect to tab with specific url
@@ -54,7 +58,7 @@ intapps_running()
 		;PageInst:= Chrome.GetPageByURL("https://intapps.carnet.hr/")
 	    }
 	if (PageInst) {
-		msgbox, login running
+		msgbox, login running. Potrebno se ulogirati.
 		exitapp
 		;return
 		; _____ only for my use. If i user name and password, it will login automatically
@@ -88,7 +92,7 @@ new_intapps()
 		 intaps_loz = document.querySelector("#password").value ="pass" ; password
 		 intaps_prijava = document.querySelector("body > div.container.login-container > div > div > form > div.form-group.row.justify-content-md-center > div > button").click()     ; click submit button defined by js path
 		 raspored = document.querySelector("body > div:nth-child(3) > table > tbody > tr:nth-child(1) > td:nth-child(1) > a > span").click()    ; click raspored button defined by js path
-		 Chrome := new Chrome("C:\Users\juksa\OneDrive\Desktop\ahk_skripte\Chrome.ahk_v1.2\newProfile1", [url] ," --remote-debugging-port=9222" )
+		 Chrome := new Chrome("C:\Users\" . A_UserName . "\AppData\Local\Google\Chrome\User Data", [url] ," --remote-debugging-port=9222" )
 		 Chrome.WaitForLoad()
 		 sleep, 4000
 		 PageInst:= Chrome.GetPageByTitle("CARNET Prijava")
@@ -116,18 +120,18 @@ crm_running()				; check if CRM running
 		crm_prijava = document.querySelector("#bigbutton").click()     ; click submit button defined by js path
 
   try {			 ;  connect to tab with specific url
-    PageInst:= Chrome.GetPageByTitle("CARNET CRM")
-      }
+     PageInst:= Chrome.GetPageByURL("https://suitecrm.carnet.hr/index.php?action=Login&module=Users&login_module=Home&login_action=index")
+	 }
   if PageInst {
-      msgBox, crm already running
-      return
+      msgBox, login running. Potrebno se ulogirati.
+      exitapp
   }
 	try {				 ;  connect to tab with specific url
-	  PageInst:= Chrome.GetPageByTitle("CARNET CRM")
+	  PageInst:=Chrome.GetPageByURL("https://suitecrm.carnet.hr/index.php?module=Home&action=index")
 	    }
 	if (PageInst) {
-		msgbox, CRM login running
-		exitapp
+		;msgbox, CRM  running
+		return
 	; _____ for private use
 		PageInst.Evaluate("alert(" "'Hello World!');")
 	  PageInst.Evaluate(global crm_loz)        ; execute JS
@@ -155,7 +159,7 @@ new_crm()
 	 crm_prijava = document.querySelector("#bigbutton").click()     ; click submit button defined by js path
 	 url := "https://suitecrm.carnet.hr/index.php?action=Login&module=Users&login_module=Home&login_action=index " ; url opened in new chrome instance
 
-	 Chrome := new Chrome("C:\Users\juksa\OneDrive\Desktop\ahk_skripte\Chrome.ahk_v1.2\newProfile1", [url] ," --remote-debugging-port=9222" )
+	 Chrome := new Chrome("C:\Users\" . A_UserName . "\AppData\Local\Google\Chrome\User Data", [url] ," --remote-debugging-port=9222" )
 	 Chrome.WaitForLoad()
 	 sleep, 4000
 	 PageInst:= Chrome.GetPageByTitle("CARNET CRM")

@@ -6,89 +6,88 @@ SetBatchLines, -1
 #Include %A_ScriptDir%\Chrome1.ahk
 crm_running()
 
-PageInst:=Chrome.GetPageByTitle("CARNET CRM") ;uzima otvoreni new tab po imenu
 
-;msgBox, pocetak
 
 Settimer,tajmer, 10000
 
 tajmer:
 
-FormatTime, date,, HH:mm
-js_eskole = document.querySelector("#pbxis_queue_eSkole > span:nth-child(6)").innerText.substr(10)
-js_szz = document.querySelector("#pbxis_queue_eSkole > span:nth-child(6)").innerText.substr(10)
-js_eskole_broj_poziva = document.querySelector("#pbxis_queue_eSkole > span:nth-child(5)").innerText.substr(9)
-js_szz_broj_poziva = document.querySelector("#pbxis_queue_SkolaZaZivot > span:nth-child(5)").innerText.substr(9)
+PageInst:=Chrome.GetPageByTitle("CARNET CRM") ;uzima otvoreni new tab po imenu
 
-eskole_poziv:= PageInst.Evaluate(js_eskole).value
-szz_poziv := PageInst.Evaluate(js_szz).value
-eskole_broj_poziva:= PageInst.Evaluate(js_eskole_broj_poziva).value
-szz_broj_poziva := PageInst.Evaluate(js_szz_broj_poziva).value
+js_kjuovi =
+(
+  JSON.stringify(
+  [].map.call(document.querySelectorAll("#pbxis-queues li"), (e) => e.innerText))
+)
+kjuovi := chrome.Jxon_Load(PageInst.Evaluate(js_kjuovi).value)
+;kju1 .= kjuovi[1]
+;msgBox, % kjuovi[1]
+kjuovi_txt = ""
+for each, element in kjuovi {
+  if (kjuovi_txt <> "")  ;Concat is not empty, so add a line feed
+     kjuovi_txt.="`n"
+     kjuovi_txt.=element
+   }
+   ;msgBox, % kjuovi_txt
 
-;msgBox, %eskole_broj_poziva%
+   js_kjuMax =
+   (
+     JSON.stringify(
+     [].map.call(document.querySelectorAll("#pbxis-queues li > span:nth-child(6)"), (e) => e.innerText.substr(10)))
+   )
+   kjuMax := chrome.Jxon_Load(PageInst.Evaluate(js_kjuMax).value)
+   ;msgBox, % kjuMax[1]
 
-; it should be other way around so that likelier statemnts are first to run
-if ( eskole_poziv >= 120) or (szz_poziv >= 120)
+   if ( kjuMax[2] = 0)
+    ;msgBox, % kjuovi[2]
+
+;msgBox, % kjuMax[1]
+;msgBox, %vrijeme_input%
+
+FormatTime, timeStamp,, HH:mm
+
+if ( kjuMax[1] = 0) or (kjuMax[2] = 0) or (kjuMax[3] = 0)
 {
-  SplashTextOn,,, A MsgBox is about to appear.
-  Sleep 3000
+  SplashTextOn ,200 ,150 , Splash,`n`n%timeStamp% NEMA POZIVA `n`n`n
+  WinMove, Splash, , 0, 0
+  sleep 1000
   SplashTextOff
-  MsgBox, 36,, Pošalji u pp-pos grupu na pidginu ? (odaberi Yes ili No)
+  return
+}
+if ( kjuMax[1] >=vrijeme_input)
+{
+  SplashTextOn ,300 ,250 , Splash,`n`n%timeStamp% `n`nPOZIV NA ČEKANJU VIŠE OD:`n`n %vrijeme_input% sekundi `n`n`n %kjuovi_txt%
+  WinMove, Splash, , 0, 0
+  sleep 3000
+  SplashTextOff
+}
+else      ; tu javlja sve izmedju 1 i %vrijeme_input%
+{
+  SplashTextOn ,300 ,250 , Splash,`n`n%timeStamp% `n`nPOZIV NA ČEKANJU ! `n`n`n %kjuovi_txt%
+  WinMove, Splash, , 0, 0
+  sleep 3000
+  SplashTextOff
+}
+/*
+else if ( kjuMax[1] >= 6000) or (kjuMax[2] >= 6000) or (kjuMax[3] >= 6000)
+{
+  MsgBox, 36,, Poziv na čekanju više od 10 minuta.`n`n Pošalji u pp-pos grupu na pidginu ? (odaberi Yes ili No),5
     IfMsgBox Yes
     {
-      clipboard := "* OVO JE AUTOMATSKA PORUKA - POZIV NA ČEKANJU *`n`n`nVrijeme objave :" date  "`n`n e-Škole vrijeme na čekanju : " eskole_poziv " `n e-Škole broj poziva na čekanju : "eskole_broj_poziva
+      clipboard := "* AUTOMATSKA PORUKA - POZIV NA ČEKANJU VIŠE OD 10 MINUTA *`n`n`nVrijeme objave :" timeStamp  "`n`n" kjuovi_txt
       msgBox, %clipboard%
       posalji()
     }
     else
-      Sleep 200
+      Sleep 500
 }
-else if ( eskole_poziv >= 60) or (szz_poziv >= 60)
-{
-  SplashTextOn,,, A MsgBox is about to appear.
-  Sleep 2000
-  SplashTextOff
-  MsgBox, 36,, Pošalji u pp-pos grupu na pidginu ? (odaberi Yes ili No)
-    IfMsgBox Yes
-    {
-      clipboard := "* OVO JE AUTOMATSKA PORUKA - POZIV NA ČEKANJU *`n`n`nVrijeme objave :" date  "`n`n e-Škole vrijeme na čekanju : " eskole_poziv " `n e-Škole broj poziva na čekanju : "eskole_broj_poziva
-      msgBox, %clipboard%
-      posalji()
-      sleep 30000
-    }
-    else
-      Sleep 200
-}
-else if ( eskole_poziv > 0) or (szz_poziv > 0)
-{
-  SplashTextOn,,, A MsgBox is about to appear.
-  Sleep 2000
-  SplashTextOff
-  MsgBox, 36,, Pošalji u pp-pos grupu na pidginu ? (odaberi Yes ili No)
-    IfMsgBox Yes
-    {
-      clipboard := "* OVO JE AUTOMATSKA PORUKA - POZIV NA ČEKANJU *`n`n`nVrijeme objave :" date  "`n`n e-Škole vrijeme na čekanju : " eskole_poziv " `n e-Škole broj poziva na čekanju : "eskole_broj_poziva
-      msgBox, %clipboard%
-      posalji()
-      sleep 30000
-    }
-    else
-      Sleep 200
-}
-else ; tu su pozivi između 0 i 1 minute
-{
-  SplashTextOn ,200 ,150 , Splash,%date% NEMA POZIVA `n`n`n SZZ vrijeme na čekanju: %szz_poziv% `n SZZ broj poziva na čekanju: %szz_broj_poziva% `n`n e-Škole vrijeme na čekanju: %eskole_poziv% `n e-Škole broj poziva na čekanju: %eskole_broj_poziva%
-  WinMove, Splash, , 1380, 810
-  Sleep 2000
-  SplashTextOff
- }
-
-
+*/
 return
 
 ; open pidign messenger, find PP chat room and send
 posalji()
 {
+  ExitApp
   Run, pidgin,,Min, PID ; Run Notepad minimized.
   WinWait, Buddy List ,,3  ; Wait for it to appear.
   ControlSend,, {down 70}
