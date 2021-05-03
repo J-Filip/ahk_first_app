@@ -6,8 +6,14 @@
 
 
 
-;InputBox, datum, UNESI, Unesi datum:
-;raspored := %datum%
+InputBox, potpis, UNESI, Unesi svoje ime i prezime koje koristiš u potpisu:
+if ErrorLevel
+  ExitApp
+if (potpis = ""){
+  ;MsgBox, Ništa nije uneseno. Prati se svaki poziv.
+  potpis = "/POTPIS/"
+}
+; gui ____________________________________________________
 Gui, Font, S8 CDefault, Verdana
 Gui, Add, Edit, x10 y20 w100 hwndIme vprezime,
 EM_SETCUEBANNER(ime, "Ime ili prezime")
@@ -18,7 +24,7 @@ EM_SETCUEBANNER(korisnik, "Korisnik")
 Gui, Add, Edit, x232 y99 w220 h200 vComposedMail,
 Gui, Add, Radio, x32 y89 w100 h30 checked gRadClicked vgdja, Gdja.
 Gui, Add, Radio, x32 y119 w100 h30 gRadClicked vgdin, Gdin.
-Gui, Add, Radio, x32 y149 w100 h30 checked gRadClicked vdraga, Draga
+Gui, Add, Radio, x32 y149 w100 h30 gRadClicked vdraga, Draga
 Gui, Add, Radio, x32 y179 w100 h20 gRadClicked vdragi, Dragi
 Gui, Add, Radio, x152 y139 w70 h30 gRadClicked vtiket, TIKET
 Gui, Add, Text, x2 y209 w60 h20 , Sadržaj
@@ -31,14 +37,16 @@ Gui, Add, Radio, x32 y360 w100 h30 gRadClicked vzaSveOstale, Za sve ostale
 Gui, Add, Radio, x142 y360 w100 h30 gRadClicked vLp, Lp
 Gui, Add, Button, x382 y299 w70 h40 gkopira, Kopiraj
 Gui, Add, Button, x472 y9 w60 h30 gsemaforButt vsemafor, Dashleti
-Gui, Add, Checkbox, x300 y380 w100 h20 gpratiPozive vprati, Prati pozive
+Gui, Add, Checkbox, x320 y35 w100 h20 gpratiPozive vprati, Prati pozive
 Gui, Add, Button, x232 y299 w60 h20 ghasekButt vhasek, Hasek
 Gui, Add, Button, x620 y9 w60 h30 grasporedButt, Raspored
 Gui, Add, Button, x680 y15 w78 h21 ghideContr, Hide/Unhide
 Gui, Add, Text, x2 y69 w110 h20 , Oslovljavanje :
-Gui, Add, Text, x2 y435 w450 h40 , ** prije korištenja mogućnosti Prati pozive, Hašek, Dashleti i Raspored, potrebno je SAMO JEDNOM ugasiti ugasiti sve otvorene chrome prozore i otvoriti ih pomoću ovog gumba ili odabirom neke od navedenih mogućnosti. **
+Gui, Add, Text, x2 y450 w450 h40 , ** prije korištenja mogućnosti Prati pozive, Hašek, Dashleti i Raspored, potrebno je SAMO JEDNOM ugasiti ugasiti sve otvorene chrome prozore i otvoriti ih pomoću ovog gumba ili odabirom neke od navedenih mogućnosti. **
+Gui, Add, Button, x430 y450 w70 h30 gugasi, X Reset X
 ; Generated using SmartGUI Creator 4.0
 Gui, Show, , EM_SETCUEBANNER
+Gui, +resize MinSize470x420 maxsize780x580
 Gui, Show, x127 y87 h500 w750, Mejlomat
 Return
 
@@ -48,6 +56,13 @@ ExitApp
 return
 ;__________________________________________________________
 ; labels
+ugasi:
+{
+  ugasiUpali("chrome.exe")
+
+}
+
+
 pratiPozive:
 {
   Gui, submit, NoHide
@@ -58,7 +73,7 @@ pratiPozive:
     GuiControlGet, crm
     if (crm = "")
     {
-      Gui, Add, Text , x300 y400 w80 h50 vcrm, - ako je više od %x% sec
+      Gui, Add, Text , x320 y50 w80 h40 vcrm, - ako je više od %x% sec
     }Else
     {
       GuiControl,, crm, - ako je više od: %x% sec
@@ -89,7 +104,7 @@ semaforButt:
   if (semaforText = "")
   {
   Gui, Font, S7 CDefault, Verdana
-  Gui, Add, Text , x472 y50 w100 h300 vsemaforText, %izvj%
+  Gui, Add, Text , x320 y65 w100 h300 vsemaforText, %izvj%
   }Else
   {
     GuiControl,, semaforText, %izvj%
@@ -178,8 +193,8 @@ hideContr:
 RadClicked:
 gdineMsg = Poštovani gospodine %editPrezime%,
 gdjoMsg = Poštovana gospođo %editPrezime%,
-dragiMsg = Dragi IME,
-dragaMsg = Draga IME,
+dragiMsg = Dragi %editPrezime%,
+dragaMsg = Draga %editPrezime%,
 pozdravMsg = Pozdrav,
 
 zahvalaMsg = zahvaljujemo na ...
@@ -188,7 +203,7 @@ nejasniMsg = nejasni upit ...
 
 ustKorMsg = ustanova:%editUstanova% `nkorisnik:%editKorisnik%
 
-zaSveOstaloMsg = Za sve ostale upite.
+zaSveOstaloMsg = Za sve ostale upite,`n%potpis%
 lpMsg = Lijep pozdrav,`n%potpis%
 
 Gui, submit, NoHide
@@ -254,7 +269,9 @@ Kopira: 			; gets edit box content and stores it in variable and then in clipboa
 	GuiControlGet, editBox,, ComposedMail
   clipboard = %editBox%
   clipboard := RegExReplace(clipboard,"\R+\R", "`r`n")
-  ;msgBox, %clipboard%
+  SplashTextOn ,300 ,150 ,Splash,  %clipboard%
+  sleep 1000
+  SplashTextOff
 	return
 
   CloseScript(Name)

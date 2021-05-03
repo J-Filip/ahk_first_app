@@ -3,6 +3,7 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 SetBatchLines, -1
 #SingleInstance, force ; gasi otvoreni windows i pokreće novi automtatski
 ; chrome i AutoHotkey
+
 #Include %A_ScriptDir%\Chrome1.ahk
 crm_running()
 

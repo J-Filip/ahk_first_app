@@ -2,12 +2,29 @@
 ; Copyright GeekDude 2018
 ; https://github.com/G33kDude/Chrome.ahk
 
+ugasiUpali( exename ){
+	WinGet LhWnd, List, % "ahk_exe " exename
+  Loop, %LhWnd%
+	{
+		PostMessage, 0x112, 0xF060,,, % "ahk_id " LhWnd%A_Index%
+	}
+	SplashTextOn ,300 ,250 , Splash, Resetiram Chrome. Pričekajte nekoliko trenutaka.
+	sleep 3000
+	SplashTextOff
+		url:= "https://intapps.carnet.hr/hdraspored/public/schedule/index"
+		Chrome := new Chrome("C:\Users\" . A_UserName . "\AppData\Local\Google\Chrome\User Data", [url] ," --remote-debugging-port=9222" )
+		Chrome.WaitForLoad()
+		return
+	}
+
 getVrijeme(){
 	InputBox, vrijeme_input, UNESI, Obavijesti me ako poziv traje više od (sekundi):
 	if ErrorLevel
 	  ExitApp
 	if (vrijeme_input = ""){
-	  MsgBox, Ništa nije uneseno. Prati se svaki poziv.
+		SplashTextOn ,200 ,150 , Splash,`n`n Ništa nije uneseno. Bit češ obaviješten za svaki poziv.`n`n`n
+  	sleep 1000
+  	SplashTextOff
 	  vrijeme_input = 1
 	}
 	global x = vrijeme_input
@@ -29,9 +46,9 @@ newHasek(){
 	url := "https://ispravi.me/"
  Chrome := new Chrome("C:\Users\" . A_UserName . "\AppData\Local\Google\Chrome\User Data", [url] ," --remote-debugging-port=9222" )
 	Chrome.WaitForLoad()
-	sleep, 4000
+	sleep, 3000
 	PageInst:= Chrome.GetPageByURL("https://ispravi.me/")
-	sleep, 2000
+	sleep, 1000
 	hasekRunning()
 }
 
