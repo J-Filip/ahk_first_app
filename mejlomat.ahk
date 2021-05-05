@@ -85,6 +85,7 @@ pratiPoziveButt:
 
 
     PageInst.Disconnect()
+    sleep 200
     kjuovi = []
     kjuMax = []
     timeStamp = ""
@@ -189,7 +190,7 @@ pratiPozive:
 
 dashletiButt:
 {
-  runwait, crmDashleti.ahk
+  runwait, crmDashleti.exe
   izvj := clipboard
   GuiControlGet, semaforText
   if (semaforText = "")
@@ -209,10 +210,10 @@ rasporedButt:
 {
   FormatTime, sati,, HH:mm
   if (sati > 14){
-    runwait, intapsPopodne.ahk
+    runwait, intapsPopodne.exe
   }
   Else{
-    runwait, intaps_jutro.ahk
+    runwait, intaps_jutro.exe
   }
   rasp := clipboard
   GuiControlGet, raspored
@@ -260,6 +261,7 @@ hideContrRasp:
 hasekButt:
 {
   PageInst.Disconnect()
+  sleep 200
   GuiControlGet, editBox,, ComposedMail
   clipboard = %editBox%
   clipboard := RegExReplace(clipboard,"\R+\R", "`r`n")
