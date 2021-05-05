@@ -2,17 +2,20 @@
 ; Copyright GeekDude 2018
 ; https://github.com/G33kDude/Chrome.ahk
 
+
 ugasiUpali( exename ){
 	WinGet LhWnd, List, % "ahk_exe " exename
   Loop, %LhWnd%
 	{
 		PostMessage, 0x112, 0xF060,,, % "ahk_id " LhWnd%A_Index%
 	}
-	SplashTextOn ,300 ,250 , Splash, Resetiram Chrome. Pričekajte nekoliko trenutaka.
-	sleep 3000
+	SplashTextOn ,300 ,50 , Splash, Resetiram Chrome. Pričekajte nekoliko trenutaka.
+	sleep 4000
 	SplashTextOff
 		url:= "https://intapps.carnet.hr/hdraspored/public/schedule/index"
-		Chrome := new Chrome("C:\Users\" . A_UserName . "\AppData\Local\Google\Chrome\User Data", [url] ," --remote-debugging-port=9222" )
+		url1:= "https://suitecrm.carnet.hr/index.php?action=Login&module=Users&login_module=Home&login_action=index"
+
+		Chrome := new Chrome("", [url, url1] ," --remote-debugging-port=9222" )
 		Chrome.WaitForLoad()
 		return
 	}
@@ -20,15 +23,17 @@ ugasiUpali( exename ){
 getVrijeme(){
 	InputBox, vrijeme_input, UNESI, Obavijesti me ako poziv traje više od (sekundi):
 	if ErrorLevel
-	  ExitApp
+	  return
 	if (vrijeme_input = ""){
 		SplashTextOn ,200 ,150 , Splash,`n`n Ništa nije uneseno. Bit češ obaviješten za svaki poziv.`n`n`n
   	sleep 1000
   	SplashTextOff
 	  vrijeme_input = 1
+		global vrijemeUnos = vrijeme_input
 	}
-	global x = vrijeme_input
-	;msgBox, %x%
+	global vrijemeUnos = vrijeme_input
+	clipboard := vrijeme_input
+	;msgBox, %vrijemeUnos%
 }
 
 
@@ -44,7 +49,7 @@ hasekRunning(){
 	}
 newHasek(){
 	url := "https://ispravi.me/"
- Chrome := new Chrome("C:\Users\" . A_UserName . "\AppData\Local\Google\Chrome\User Data", [url] ," --remote-debugging-port=9222" )
+ Chrome := new Chrome("", [url] ," --remote-debugging-port=9222" )
 	Chrome.WaitForLoad()
 	sleep, 3000
 	PageInst:= Chrome.GetPageByURL("https://ispravi.me/")
@@ -109,7 +114,7 @@ new_intapps()
 		 intaps_loz = document.querySelector("#password").value ="pass" ; password
 		 intaps_prijava = document.querySelector("body > div.container.login-container > div > div > form > div.form-group.row.justify-content-md-center > div > button").click()     ; click submit button defined by js path
 		 raspored = document.querySelector("body > div:nth-child(3) > table > tbody > tr:nth-child(1) > td:nth-child(1) > a > span").click()    ; click raspored button defined by js path
-		 Chrome := new Chrome("C:\Users\" . A_UserName . "\AppData\Local\Google\Chrome\User Data", [url] ," --remote-debugging-port=9222" )
+		 Chrome := new Chrome("", [url] ," --remote-debugging-port=9222" )
 		 Chrome.WaitForLoad()
 		 sleep, 4000
 		 PageInst:= Chrome.GetPageByTitle("CARNET Prijava")
@@ -176,7 +181,7 @@ new_crm()
 	 crm_prijava = document.querySelector("#bigbutton").click()     ; click submit button defined by js path
 	 url := "https://suitecrm.carnet.hr/index.php?action=Login&module=Users&login_module=Home&login_action=index " ; url opened in new chrome instance
 
-	 Chrome := new Chrome("C:\Users\" . A_UserName . "\AppData\Local\Google\Chrome\User Data", [url] ," --remote-debugging-port=9222" )
+	 Chrome := new Chrome("", [url] ," --remote-debugging-port=9222" )
 	 Chrome.WaitForLoad()
 	 sleep, 4000
 	 PageInst:= Chrome.GetPageByTitle("CARNET CRM")

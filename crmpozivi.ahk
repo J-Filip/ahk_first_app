@@ -6,12 +6,22 @@ SetBatchLines, -1
 
 #Include %A_ScriptDir%\Chrome1.ahk
 crm_running()
+getVrijeme()
 
 
 
-Settimer,tajmer, 10000
 
+#Persistent
+Settimer,tajmer, 7000
+return
+msgBox, stala skripta
 tajmer:
+
+
+PageInst.Disconnect()
+kjuovi = []
+kjuMax = []
+timeStamp = ""
 
 PageInst:=Chrome.GetPageByTitle("CARNET CRM") ;uzima otvoreni new tab po imenu
 
@@ -39,63 +49,40 @@ for each, element in kjuovi {
    kjuMax := chrome.Jxon_Load(PageInst.Evaluate(js_kjuMax).value)
    ;msgBox, % kjuMax[1]
 
-   if ( kjuMax[2] = 0)
     ;msgBox, % kjuovi[2]
 
 ;msgBox, % kjuMax[1]
-;msgBox, %vrijeme_input%
 
 FormatTime, timeStamp,, HH:mm
+;msgBox, % timeStamp
 
-if ( kjuMax[1] = 0) or (kjuMax[2] = 0) or (kjuMax[3] = 0)
+
+for each, e in kjuMax{
+  ;msgBox, % e
+if ( e = 0 )
 {
-  SplashTextOn ,200 ,150 , Splash,`n`n%timeStamp% NEMA POZIVA `n`n`n
+  SplashTextOn ,200 ,150 , Splash,`n`n%timeStamp% NEMA POZIVA `n`n`n | Pratim svakih %vrijemeUnos% sekundi |
   WinMove, Splash, , 0, 0
-  sleep 1000
+  sleep 500
   SplashTextOff
-  return
+  Return
 }
-if ( kjuMax[1] >=vrijeme_input)
+if ( e >=vrijeme_input)
 {
-  SplashTextOn ,300 ,250 , Splash,`n`n%timeStamp% `n`nPOZIV NA ČEKANJU VIŠE OD:`n`n %vrijeme_input% sekundi `n`n`n %kjuovi_txt%
-  WinMove, Splash, , 0, 0
+  msgBox, poziv
+  SplashTextOn ,800 ,400 , Splash,`n`n%timeStamp% `n`nPOZIV NA ČEKANJU VIŠE OD:`n`n %vrijemeUnos% sekundi `n`n`n %kjuovi_txt%
+  ;WinMove, Splash, , 0, 0
   sleep 3000
   SplashTextOff
+  Return
 }
 else      ; tu javlja sve izmedju 1 i %vrijeme_input%
 {
-  SplashTextOn ,300 ,250 , Splash,`n`n%timeStamp% `n`nPOZIV NA ČEKANJU ! `n`n`n %kjuovi_txt%
-  WinMove, Splash, , 0, 0
+  SplashTextOn ,800 ,400 , Splash,`n`n%timeStamp% `n`nPOZIV NA ČEKANJU ! `n`n`n %kjuovi_txt%
+  ;WinMove, Splash, , 0, 0
   sleep 3000
   SplashTextOff
+  Return
+ }
 }
-/*
-else if ( kjuMax[1] >= 6000) or (kjuMax[2] >= 6000) or (kjuMax[3] >= 6000)
-{
-  MsgBox, 36,, Poziv na čekanju više od 10 minuta.`n`n Pošalji u pp-pos grupu na pidginu ? (odaberi Yes ili No),5
-    IfMsgBox Yes
-    {
-      clipboard := "* AUTOMATSKA PORUKA - POZIV NA ČEKANJU VIŠE OD 10 MINUTA *`n`n`nVrijeme objave :" timeStamp  "`n`n" kjuovi_txt
-      msgBox, %clipboard%
-      posalji()
-    }
-    else
-      Sleep 500
-}
-*/
 return
-
-; open pidign messenger, find PP chat room and send
-posalji()
-{
-  ExitApp
-  Run, pidgin,,Min, PID ; Run Notepad minimized.
-  WinWait, Buddy List ,,3  ; Wait for it to appear.
-  ControlSend,, {down 70}
-  Sleep, 500
-  ControlSend,, {Enter}
-  Sleep, 500
-  WinWait, pp-pos ,,3  ; Wait for it to appear.
-  ControlSend,, ^+v
-  Sleep, 200
-}

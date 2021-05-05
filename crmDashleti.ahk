@@ -18,11 +18,12 @@ if !IsObject(PageInst) {
 dashleti_array:= []
 dashleti_txt:=" Dashleti: `n "
 
-PageInst.Evaluate("location.reload()")
-sleep, 4000
+;PageInst.Evaluate("location.reload()")
 PageInst:=Chrome.GetPageByURL("https://suitecrm.carnet.hr/index.php?module=Home&action=index")
 dashTab = document.querySelector("#tab0").click()
 PageInst.Evaluate(dashTab)
+sleep, 2000
+
 
 /*
 js_tabovi =
@@ -48,7 +49,7 @@ js_broj_zahtjeva=
     )
 broj_zahtjeva := chrome.Jxon_Load(PageInst.Evaluate(js_broj_zahtjeva).value)
 ;msgBox, % broj_zahtjeva[1]
-
+PageInst.Disconnect()
 i := 1
 
 ; ___ ne radi jer zbraja sve page_numbers na stranici pa bi trebalo stalno refrreshat i navigirat

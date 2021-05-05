@@ -152,7 +152,7 @@ vikend()
 	clipboard := "* VIKEND/BLAGDAN JE *" datumTxt " `n`n`n2nd ujutro je :   "firsti[1] " `n`nJutarnja redovna smjena :`n`n"smjena1_txt  "`n`nDodatni agenti ujutro:`n`n " dodatni_array_txt "`n`nUkupno agenata:  "ukupno
 	;msgBox,,Automatska poruka, %clipboard%
 }
-
+PageInst.Disconnect()
 ExitApp
 
 /* open pidign messenger, find one of the 2nd agents and send second_report*/
