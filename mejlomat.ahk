@@ -260,8 +260,6 @@ hideContrRasp:
 
 hasekButt:
 {
-  PageInst.Disconnect()
-  sleep 200
   GuiControlGet, editBox,, ComposedMail
   clipboard = %editBox%
   clipboard := RegExReplace(clipboard,"\R+\R", "`r`n")
@@ -271,7 +269,10 @@ hasekButt:
   PageInst:= Chrome.GetPageByURL("https://ispravi.me/")
   PageInst.Evaluate("document.querySelector('#textarea').innerText="Chrome.Jxon_Dump(clipboard) )
   PageInst.Evaluate("document.querySelector('#checkText').click()")
+  PageInst.Disconnect()
+  sleep 200
   return
+
 }
 
 Kopira: 	; gets edit box content and stores it in variable and then in clipboard
