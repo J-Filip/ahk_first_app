@@ -7,7 +7,7 @@
 
 InputBox, potpis, UNESI, Unesi svoje ime i prezime koje koristiš u potpisu:
 if ErrorLevel{
-  msgBox, Neš koristit? Pff...
+  msgBox, Neš koristit? Pff...T
   ExitApp
 }
 if (potpis = ""){
@@ -43,7 +43,7 @@ Gui, Add, Radio, x142 y390 w100 h30 gRadClicked vLp, Lp
 Gui, Add, Button, x382 y299 w70 h40 gkopira, Kopiraj
 Gui, Add, Button, x472 y9 w60 h30 gdashletiButt vsemafor, Dashleti
 GUI, Add, Button, x530 y20 w78 h21 ghideContrDash, Hide/Unhide
-Gui, Add, Checkbox, x320 y35 w100 h20 gpratiPoziveButt vprati, Prati pozive
+Gui, Add, Checkbox, x320 y20 w100 h20 gpratiPoziveButt vprati, Prati pozive
 Gui, Add, Button, x232 y299 w60 h20 ghasekButt vhasek, Hasek
 Gui, Add, Button, x620 y9 w60 h30 grasporedButt, Raspored
 Gui, Add, Button, x680 y20 w78 h21 ghideContrRasp, Hide/Unhide
@@ -63,6 +63,7 @@ ExitApp
 return
 ;__________________________________________________________
 ; labels
+/*
 pratiPoziveButt:
   {
     Gui, submit, NoHide
@@ -84,8 +85,7 @@ pratiPoziveButt:
     tajmer:
 
 
-    PageInst.Disconnect()
-    sleep 200
+
     kjuovi = []
     kjuMax = []
     timeStamp = ""
@@ -114,12 +114,15 @@ pratiPoziveButt:
          [].map.call(document.querySelectorAll("#pbxis-queues li > span:nth-child(6)"), (e) => e.innerText.substr(10)))
        )
        kjuMax := chrome.Jxon_Load(PageInst.Evaluate(js_kjuMax).value)
+
+    PageInst.Disconnect()
+    sleep 500
     FormatTime, timeStamp,, HH:mm
     for each, e in kjuMax{
       ;msgBox, % e
     if ( e = 0 )
     {
-      SplashTextOn ,200 ,150 , Splash,`n`n%timeStamp% NEMA POZIVA `n`n`n | Pratim svakih %vrijemeUnos% sekundi |
+      SplashTextOn ,200 ,250 , Splash,`n`n%timeStamp% NEMA POZIVA `n`n`n | Pratim svakih %vrijemeUnos% sekundi | %kjuovi_txt%
       WinMove, Splash, , 0, 0
       sleep 500
       SplashTextOff
@@ -130,7 +133,6 @@ pratiPoziveButt:
       msgBox, poziv
       SplashTextOn ,800 ,400 , Splash,`n`n%timeStamp% `n`nPOZIV NA ČEKANJU VIŠE OD:`n`n %vrijemeUnos% sekundi `n`n`n %kjuovi_txt%
       ;WinMove, Splash, , 0, 0
-      sleep 3000
       SplashTextOff
       Return
     }
@@ -152,9 +154,139 @@ pratiPoziveButt:
   	SplashTextOff
     SetTimer, tajmer, Off
   }
+  PageInst.Disconnect()
+  sleep 200
   return
 }
+*/
+pratiPoziveButt:
+  {
 
+    Gui, submit, NoHide
+    if (prati = 1){
+    crm_running()
+    getVrijeme()
+    SplashTextOn ,100 ,60 , Splash, Praćenje uključeno
+    sleep 1000
+    SplashTextOff
+    FormatTime, timeStamp1,, HH:mm
+    GuiControlGet, crm
+    if (crm = "")
+    {
+      Gui, Add, Text , x318 y38 w140 h60 vcrm, > %vrijemeUnos% sec `n Početak praćenja: %timeStamp1%
+    }Else
+    {
+      GuiControl,, crm, > %vrijemeUnos% sec `n Početak praćenja: %timeStamp1%
+    }
+    ;msgBox, % vrijemeUnos
+    Settimer,tajmer, 15000
+    ;msgBox, iniciro tajmer
+    return
+    ;msgBox, stala skripta
+    tajmer:
+    ;msgBox, početo tajmer
+
+    kjuovi = []
+    kjuMax = []
+    ukupnoPoz = ""
+    kjuMaxZbroj = 0
+    timeStamp = ""
+    url := "https://suitecrm.carnet.hr/index.php?module=Home&action=index"
+
+      PageInst:=Chrome.GetPageByURL("https://suitecrm.carnet.hr/index.php?module=Home&action=index") ;uzima otvoreni new tab po imenu
+      if !IsObject(PageInst) {
+          msgbox, Moras otvorit CRM home za praćenje poziva !!
+          ChromeInst := new Chrome("", [url] ," --remote-debugging-port=9222" )
+      }
+    js_kjuovi =
+    (
+      JSON.stringify(
+      [].map.call(document.querySelectorAll("#pbxis-queues li"), (e) => e.innerText))
+    )
+    try {
+      kjuovi := chrome.Jxon_Load(PageInst.Evaluate(js_kjuovi).value)
+    } catch e {
+      msgBox, Istek sesije ! Ponovo pokreni praćenje poziva.
+      exitapp
+    }
+     sleep 100
+    ;kju1 .= kjuovi[1]
+    ;msgBox, % kjuovi[1]
+    kjuovi_txt = ""
+    for each, element in kjuovi {
+      if (kjuovi_txt <> "")  ;Concat is not empty, so add a line feed
+         kjuovi_txt.="`n"
+         kjuovi_txt.=element
+       }
+       ;msgBox, % kjuovi_txt
+
+       js_kjuMax =
+       (
+         JSON.stringify(
+         [].map.call(document.querySelectorAll("#pbxis-queues li > span:nth-child(6)"), (e) => e.innerText.substr(10)))
+       )
+       try{
+         kjuMax := chrome.Jxon_Load(PageInst.Evaluate(js_kjuMax).value)
+       } catch e {
+         msgBox, Istek sesije ! Ponovo pokreni praćenje poziva.
+         exitapp
+       }
+       sleep 100
+
+       try
+       {
+         PageInst.Disconnect()
+      } catch e {
+        msgBox, nije diskonekto
+      }
+
+    FormatTime, timeStamp2,, HH:mm
+    GuiControlGet, crm
+    GuiControl,, crm, > %vrijemeUnos% sec %vrijeme% `n Početak praćenja: %timeStamp1% `nZadnja provjera: %timeStamp2%
+    for each, e in kjuMax{
+      if (e > "0"){
+        kjuMaxZbroj += e
+      }
+    }
+    ;_______________________ conditions for splashtext
+    if ( %kjuMaxZbroj% = 0 )
+    {
+      SplashTextOn ,200 ,280 , Splash,`n`n%timeStamp2% NEMA POZIVA `n`n`n | Pratim svakih %vrijemeUnos% sekundi | %kjuovi_txt%
+      WinMove, Splash, , 0, 0
+      sleep 500
+      SplashTextOff
+      Return
+    }
+    else if ( %kjuMaxZbroj% >= vrijemeUnos)
+    {
+      msgBox, poziv
+      SplashTextOn ,800 ,400 , Splash,`n`n%timeStamp% `n`nPOZIV NA ČEKANJU VIŠE OD:`n`n %vrijemeUnos% sekundi `n`n`n %kjuovi_txt%
+      ;WinMove, Splash, , 0, 0
+      sleep 6000
+      SplashTextOff
+      Return
+    }
+    else      ; tu javlja sve izmedju 1 i %vrijeme_input%
+    {
+      SplashTextOn ,800 ,400 , Splash,`n`n%timeStamp% `n`nPOZIV NA ČEKANJU ! `n`n`n %kjuovi_txt%
+      ;WinMove, Splash, , 0, 0
+      sleep 6000
+      SplashTextOff
+      Return
+     }
+
+  }
+  if (prati = 0){
+    GuiControl,, crm, ""
+    SplashTextOn ,200 ,100 , Splash,`n`n Praćenje poziva isključeno !`n`n
+  	sleep 1000
+  	SplashTextOff
+    SetTimer, tajmer, Off
+    PageInst.Disconnect()
+    sleep 200
+    return
+  }
+}
 resetButt:
 {
   ugasiUpali("chrome.exe")
@@ -337,7 +469,7 @@ nejasniMsg = zaprimili smo poruku nejasnog sadržaja. Molimo Vas da provjerite j
 proslijeđenHdMsg = Vaš upit proslijeđen je odgovarajućoj službi - CARNET podršci za krajnje korisnike na elektroničku adresu helpdesk@carnet.hr. Molimo Vas za strpljenje do pristizanja odgovora. Molimo Vas da ubuduće sve slične upite šaljete izravno na navedenu adresu. Ako je poruka ipak namijenjena CARNET-u, u povratnoj poruci potrebno nam je poslati detaljniji upit kako bismo mogli pružiti odgovarajuću podršku.
 nedovoljnoMsg = zbog nedovoljno informacija nismo Vam u mogućnosti pružiti odgovarajuću podršku. Molimo Vas da nam u povratnoj poruci
 ustKorMsg = ustanova:%editUstanova% `nkorisnik:%editKorisnik%
-zaSveOstaloMsg = Za sve ostale upite stojimo Vam na raspolaganju,`n%potpis%
+zaSveOstaloMsg = Za sve ostale upite stojimo Vam na raspolaganju.
 lpMsg = Lijep pozdrav,`n%potpis%
 
 Gui, submit, NoHide

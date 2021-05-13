@@ -15,8 +15,8 @@ ugasiUpali( exename ){
 		url:= "https://intapps.carnet.hr/hdraspored/public/schedule/index"
 		url1:= "https://suitecrm.carnet.hr/index.php?action=Login&module=Users&login_module=Home&login_action=index"
 
-		Chrome := new Chrome("", [url, url1] ," --remote-debugging-port=9222" )
-		Chrome.WaitForLoad()
+		ChromeInst := new Chrome("", [url, url1] ," --remote-debugging-port=9222" )
+		ChromeInst.WaitForLoad()
 		return
 	}
 
@@ -38,9 +38,9 @@ getVrijeme(){
 
 
 hasekRunning(){
-	try {			 ;  connect to tab with specific url
-		PageInst:= Chrome.GetPageByURL("https://ispravi.me/")
-	}
+
+	PageInst:= ChromeInst.GetPageByURL("https://ispravi.me/")
+
 	if PageInst {
 		;msgBox, hasek already running.
 		return
@@ -49,10 +49,10 @@ hasekRunning(){
 	}
 newHasek(){
 	url := "https://ispravi.me/"
- Chrome := new Chrome("", [url] ," --remote-debugging-port=9222" )
-	Chrome.WaitForLoad()
+ ChromeInst := new Chrome("", [url] ," --remote-debugging-port=9222" )
+	ChromeInst.WaitForLoad()
 	sleep, 3000
-	PageInst:= Chrome.GetPageByURL("https://ispravi.me/")
+	PageInst:= ChromeInst.GetPageByURL("https://ispravi.me/")
 	sleep, 1000
 	hasekRunning()
 }
@@ -68,7 +68,8 @@ intapps_running()
 		 raspored = document.querySelector("body > div:nth-child(3) > table > tbody > tr:nth-child(1) > td:nth-child(1) > a > span").click()    ; click raspored button defined by js path
 
 	try {			 ;  connect to tab with specific url
-    PageInst:= Chrome.GetPageByURL("https://intapps.carnet.hr/hdraspored/public/schedule/index")
+    PageInst:= ChromeInst.GetPageByURL("https://intapps.carnet.hr/hdraspored/public/schedule/index")
+		PageInst.WaitForLoad()
       }
   if PageInst {
       ;msgBox, raspored already running.
@@ -76,7 +77,7 @@ intapps_running()
   	}
 	try {				 ;  connect to tab with specific url
 		PageInst:= Chrome.GetPageByTitle("CARNET Prijava")
-
+		PageInst.WaitForLoad()
 		;PageInst:= Chrome.GetPageByURL("https://intapps.carnet.hr/")
 	    }
 	if (PageInst) {
@@ -117,7 +118,7 @@ new_intapps()
 		 Chrome := new Chrome("", [url] ," --remote-debugging-port=9222" )
 		 Chrome.WaitForLoad()
 		 sleep, 4000
-		 PageInst:= Chrome.GetPageByTitle("CARNET Prijava")
+		 PageInst:= ChromeInst.GetPageByTitle("CARNET Prijava")
 		 sleep, 2000
 		 intapps_running()
 		 return
@@ -137,24 +138,31 @@ new_intapps()
 
 crm_running()				; check if CRM running
 	{
+
+		/*
 		crm_ime = document.querySelector("#user_name").value = "username"; username
 		crm_loz = document.querySelector("#username_password").value ="pass" ; password
 		crm_prijava = document.querySelector("#bigbutton").click()     ; click submit button defined by js path
+		*/
 
-  try {			 ;  connect to tab with specific url
      PageInst:= Chrome.GetPageByURL("https://suitecrm.carnet.hr/index.php?action=Login&module=Users&login_module=Home&login_action=index")
-	 }
+		 PageInst.WaitForLoad()
   if PageInst {
-      msgBox, login running. Potrebno se ulogirati.
+      ;msgBox, login running. Potrebno se ulogirati.
       exitapp
   }
 	try {				 ;  connect to tab with specific url
 	  PageInst:=Chrome.GetPageByURL("https://suitecrm.carnet.hr/index.php?module=Home&action=index")
-	    }
-	if (PageInst) {
+	    } catch e{
+			msgBox, Istek. Pokreni ponovo.
+			exitapp
+			}
+	if PageInst {
 		;msgbox, CRM  running
 		return
+	}
 	; _____ for private use
+	/*
 		PageInst.Evaluate("alert(" "'Hello World!');")
 	  PageInst.Evaluate(global crm_loz)        ; execute JS
 	  try {
@@ -171,25 +179,32 @@ crm_running()				; check if CRM running
 	  msgBox, login success
 	  return
 	 }
+ */
 	 else
-	 	new_crm()
+	 {
+		 msgBox, novi
+		 new_crm()
+	 }
 	}
 new_crm()
  {
+	 /*
 	 crm_ime = document.querySelector("#user_name").value = "user"; username
 	 crm_loz = document.querySelector("#username_password").value ="pass" ; password
 	 crm_prijava = document.querySelector("#bigbutton").click()     ; click submit button defined by js path
+	 */
 	 url := "https://suitecrm.carnet.hr/index.php?action=Login&module=Users&login_module=Home&login_action=index " ; url opened in new chrome instance
 
-	 Chrome := new Chrome("", [url] ," --remote-debugging-port=9222" )
-	 Chrome.WaitForLoad()
+	 ChromeInst := new Chrome("", [url] ," --remote-debugging-port=9222" )
 	 sleep, 4000
-	 PageInst:= Chrome.GetPageByTitle("CARNET CRM")
+	 PageInst:= ChromeInst.GetPageByTitle("CARNET CRM")
+	 PageInst.WaitForLoad()
 	 sleep, 2000
 	 crm_running()
 	 return
 	; ________ only for private use, login automatically
-	PageInst:= Chrome.GetPageByURL("https://suitecrm.carnet.hr/index.php?action=Login&module=Users&login_module=Home&login_action=index")
+	/*
+	PageInst:= ChromeInst.GetPageByURL("https://suitecrm.carnet.hr/index.php?action=Login&module=Users&login_module=Home&login_action=index")
 	sleep, 2000
 	PageInst.Evaluate(crm_loz)        ; execute JS
 	try {
@@ -204,8 +219,8 @@ new_crm()
 	  ExitApp
 	}
 	msgBox, new chrome opened
+	*/
 }
-
  ;_________________________________________________________________________________
 
 class Chrome
@@ -434,7 +449,7 @@ class Chrome
 		{
 			if !this.Connected
 				throw Exception("Not connected to tab")
-
+				return
 			; Use a temporary variable for ID in case more calls are made
 			; before we receive a response.
 			ID := this.ID += 1
@@ -446,9 +461,13 @@ class Chrome
 				return
 
 			; Wait for the response
-			this.responses[ID] := False
-			while !this.responses[ID]
-				Sleep, 50
+			;_____ goes to sleep loop after some time or if inactive chrome ?? will try to connect back if in endless loop
+				this.responses[ID] := False
+				while !this.responses[ID]{
+					Sleep, 50
+					return
+				}
+
 
 			; Get the response, check if it's an error
 			response := this.responses.Delete(ID)
