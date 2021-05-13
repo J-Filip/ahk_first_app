@@ -1,5 +1,5 @@
 <h1>Mejlomat </h1>
-<h3>More info: https://j-filip.github.io./project_item1.html</h3>
+<h3>More info: https://j-filip.github.io/my_resume/project_item1.html</h3>
 
 
 
