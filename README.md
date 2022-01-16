@@ -1,4 +1,5 @@
-<h1>Mejlomat </h1>
+AutoHotkey | JavaScript
+<h1>AHK MejloMlat </h1>
 <h3>More info: https://j-filip.github.io/my_resume/project_item1.html</h3>
 
 
