@@ -1,10 +1,8 @@
-AutoHotkey | JavaScript
-<h1>AHK MejloMlat </h1>
-<h3>More info: https://j-filip.github.io/my_resume/project_item1.html</h3>
+# MejloMlat
+[Read more](https://filip-jugkala.com/projects/2020%20mejlomlat/) 
 
+## Use
 
-
-- GUI mail composer + webscraper using AutoHotkey mixed with Javascript. 
-- made for job purposes.
-- my first project. 
-
+- install AutoHotkey, download v0.8 and run script mejlomat.ahk
+### or
+- download v0.8 and run mejlomat.exe
